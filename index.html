@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1b2440">
+<title>Reencuentro de la Promo</title>
+<meta name="description" content="Consulta de fechas y adicionales para el reencuentro de diciembre de 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700;9..40,800&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231b2440'/%3E%3Ctext x='16' y='22' font-size='16' font-family='Georgia' font-weight='700' text-anchor='middle' fill='%23e8572a'%3ER%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <span class="kicker">Promoción · Diciembre 2026</span>
+    <h1>Volvamos a <em>encontrarnos</em></h1>
+    <p id="heroText">Ayúdanos a elegir la fecha y lo que no puede faltar en el reencuentro.</p>
+    <div class="ticket-edge" aria-hidden="true"></div>
+  </header>
+
+  <main id="app" aria-live="polite">
+    <div class="loading" id="loading"><span class="spinner" aria-hidden="true"></span>Cargando la consulta…</div>
+    <div id="banner"></div>
+
+    <nav class="tabs" id="tabs" role="tablist" hidden>
+      <button role="tab" id="tabComprar" aria-selected="true" data-view="venta">Registrar entradas</button>
+      <button role="tab" id="tabMis" aria-selected="false" data-view="mis">Mis entradas</button>
+    </nav>
+
+    <!-- ================= Fase 1: votación ================= -->
+    <form id="voteForm" class="card" novalidate hidden>
+      <h2><span class="step">1</span>Tus datos</h2>
+      <p class="lead">Solo responden integrantes de la promoción. Tus datos no se publican.</p>
+
+      <div class="field" data-f="nombre">
+        <label for="nombre">Nombre completo</label>
+        <input type="text" id="nombre" name="nombre" autocomplete="name" maxlength="80" required>
+        <div class="err-msg"></div>
+      </div>
+      <div class="row2">
+        <div class="field" data-f="dni">
+          <label for="dni">DNI</label>
+          <input type="text" id="dni" name="dni" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" autocomplete="off" required>
+          <div class="err-msg"></div>
+        </div>
+        <div class="field" data-f="whatsapp">
+          <label for="whatsapp">WhatsApp</label>
+          <input type="tel" id="whatsapp" name="whatsapp" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="987 654 321" required>
+          <div class="err-msg"></div>
+        </div>
+      </div>
+      <div class="field" data-f="acompanantes">
+        <label for="acompanantes">¿Cuántos acompañantes llevarías?<span class="hint">Es una estimación para calcular el espacio. Puede ser cero.</span></label>
+        <div class="stepper">
+          <button type="button" aria-label="Uno menos" data-step="-1">−</button>
+          <input type="number" id="acompanantes" name="acompanantes" min="0" step="1" value="0" inputmode="numeric" required>
+          <button type="button" aria-label="Uno más" data-step="1">+</button>
+        </div>
+        <div class="err-msg"></div>
+      </div>
+      <div class="field" data-f="integrante">
+        <label class="check"><input type="checkbox" id="integrante"> <span>Declaro que soy integrante de la promoción. Mis acompañantes no votan.</span></label>
+        <div class="err-msg"></div>
+      </div>
+
+      <h2 style="margin-top:22px"><span class="step">2</span>Fechas posibles</h2>
+      <p class="lead" id="fechasLead">Elige 2 o 3 fechas en las que podrías asistir.</p>
+      <div class="field" data-f="fechas">
+        <div class="cal" id="cal" role="group" aria-label="Calendario de diciembre de 2026"></div>
+        <div class="err-msg"></div>
+      </div>
+
+      <h2 style="margin-top:22px"><span class="step">3</span>Adicionales</h2>
+      <p class="lead">La base incluye piqueos y bebidas alcohólicas. ¿Qué te gustaría sumar? Puedes elegir varias o ninguna.</p>
+      <div class="field" data-f="adicionales">
+        <div class="chips" id="chips"></div>
+        <div class="aviso" id="aviso"></div>
+        <div class="err-msg"></div>
+      </div>
+
+      <div class="hp" aria-hidden="true"><label>Empresa web <input type="text" id="empresa_web" tabindex="-1" autocomplete="off"></label></div>
+
+      <div id="formMsg"></div>
+      <button class="btn" type="submit" id="btnVotar">Enviar mi respuesta</button>
+      <p class="hint" style="text-align:center;margin-top:10px">Solo se confirma cuando el servidor responde. Si falla, tus datos se quedan aquí.</p>
+    </form>
+
+    <section id="done" class="card receipt" hidden>
+      <div class="big-ok" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+      <h2 id="doneTitle">¡Respuesta registrada!</h2>
+      <p class="lead" id="doneMsg"></p>
+      <p class="hint">Tu recibo (guárdalo para consultar el estado):</p>
+      <div class="code" id="doneRecibo"></div>
+      <button class="btn small ghost" type="button" id="copyRecibo">Copiar recibo</button>
+    </section>
+
+    <section id="reciboBox" class="card" hidden>
+      <h2>Consultar mi recibo</h2>
+      <div class="field"><label for="reciboIn">Recibo</label><input type="text" id="reciboIn" autocomplete="off" placeholder="R-…"></div>
+      <div id="reciboMsg"></div>
+      <button class="btn ghost" type="button" id="btnRecibo">Consultar</button>
+    </section>
+    <p style="text-align:center" id="reciboLinkWrap" hidden><button class="link" type="button" id="reciboLink">¿Ya respondiste? Consulta tu recibo</button></p>
+
+    <!-- ================= Fase 2: venta ================= -->
+    <section id="venta" hidden>
+      <div class="card">
+        <h2>Tu entrada al reencuentro</h2>
+        <p class="lead" id="ventaInclus"></p>
+        <dl class="kv" id="ventaKv"></dl>
+        <div class="notice warn" style="margin-top:12px"><div><b>Adelantos no reembolsables.</b><p>Puedes pagar en partes o en grupo. Cada pago lo verifica el organizador.</p></div></div>
+      </div>
+      <form id="ventaForm" class="card" novalidate>
+        <h2><span class="step">1</span>Integrante responsable</h2>
+        <div class="field" data-f="nombre"><label for="vNombre">Nombre completo</label><input type="text" id="vNombre" autocomplete="name" maxlength="80"><div class="err-msg"></div></div>
+        <div class="row2">
+          <div class="field" data-f="dni"><label for="vDni">DNI</label><input type="text" id="vDni" inputmode="numeric" maxlength="8" autocomplete="off"><div class="err-msg"></div></div>
+          <div class="field" data-f="whatsapp"><label for="vWsp">WhatsApp</label><input type="tel" id="vWsp" inputmode="tel" autocomplete="tel" maxlength="20"><div class="err-msg"></div></div>
+        </div>
+        <div class="field" data-f="integrante"><label class="check"><input type="checkbox" id="vIntegrante"> <span>Soy integrante de la promoción.</span></label><div class="err-msg"></div></div>
+        <h2 style="margin-top:20px"><span class="step">2</span>Invitados</h2>
+        <p class="lead">Cada invitado necesita nombre completo y DNI. Queda vinculado a ti.</p>
+        <div class="field" data-f="invitados"><div id="guests"></div><div class="err-msg"></div></div>
+        <button class="btn small ghost" type="button" id="addGuest">+ Agregar invitado</button>
+        <div class="field" data-f="acepta_adelantos" style="margin-top:18px"><label class="check"><input type="checkbox" id="vAcepta"> <span>Entiendo que los adelantos no son reembolsables.</span></label><div class="err-msg"></div></div>
+        <div class="hp" aria-hidden="true"><input type="text" id="vEmpresa" tabindex="-1" autocomplete="off"></div>
+        <div id="ventaMsg"></div>
+        <button class="btn" type="submit" id="btnVenta">Registrar entradas</button>
+      </form>
+    </section>
+
+    <section id="mis" hidden>
+      <form class="card" id="credForm" novalidate>
+        <h2>Mis entradas</h2>
+        <p class="lead">Ingresa el código de grupo que recibiste al registrarte.</p>
+        <div class="field"><label for="cred">Código de grupo</label><input type="text" id="cred" autocomplete="off" placeholder="G-…"></div>
+        <div id="credMsg"></div>
+        <button class="btn ghost" type="submit">Ver mis entradas</button>
+      </form>
+      <div id="grupoView" hidden>
+        <div class="card">
+          <h2>Código de grupo</h2>
+          <p class="lead">Guárdalo: con él ves tus entradas, tus QR y reportas pagos.</p>
+          <div class="code" id="grupoCred"></div>
+          <button class="btn small ghost" type="button" id="copyCred">Copiar código</button>
+        </div>
+        <div class="tickets" id="tickets"></div>
+        <form class="card" id="pagoForm" novalidate>
+          <h2>Reportar un pago</h2>
+          <p class="lead" id="pagoInstr"></p>
+          <div class="row2">
+            <div class="field" data-f="canal"><label for="pCanal">Medio</label><select id="pCanal"><option value="">Elige…</option><option>Yape</option><option>Plin</option><option>Transferencia</option></select><div class="err-msg"></div></div>
+            <div class="field" data-f="monto"><label for="pMonto">Monto (S/)</label><input type="number" id="pMonto" min="0.01" step="0.01" inputmode="decimal"><div class="err-msg"></div></div>
+          </div>
+          <div class="row2">
+            <div class="field" data-f="referencia"><label for="pRef">N.º de operación</label><input type="text" id="pRef" maxlength="40" autocomplete="off"><div class="err-msg"></div></div>
+            <div class="field" data-f="fecha_operacion"><label for="pFecha">Fecha del pago</label><input type="date" id="pFecha"><div class="err-msg"></div></div>
+          </div>
+          <div class="field" data-f="pagador"><label for="pPagador">¿Quién pagó? (nombre completo)</label><input type="text" id="pPagador" maxlength="80"><div class="err-msg"></div></div>
+          <div class="field"><span class="legend">¿Para qué entradas?</span><div class="chips" id="pEntradas"></div></div>
+          <div id="pagoMsg"></div>
+          <button class="btn" type="submit" id="btnPago">Reportar pago</button>
+          <p class="hint" style="text-align:center;margin-top:8px">Reportar no confirma el pago: cuenta cuando el organizador lo verifica.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+  <p class="foot">Reencuentro de la promoción · Datos tratados solo para organizar el evento.</p>
+</div>
+<script src="config.js"></script>
+<script src="vendor/qrcode.js"></script>
+<script src="assets/api.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

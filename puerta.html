@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>Control de puerta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,700;9..40,800&family=Fraunces:opsz,wght@9..144,700;9..144,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <span class="kicker">Reencuentro · Puerta</span>
+    <h1>Control de <em>ingreso</em></h1>
+    <p>Solo para operadores autorizados por el organizador.</p>
+    <div class="ticket-edge" aria-hidden="true"></div>
+  </header>
+
+  <form class="card" id="login" novalidate>
+    <h2>Credencial de operador</h2>
+    <p class="lead">La entrega el organizador. Se guarda solo en esta pestaña.</p>
+    <div class="field"><label for="op">Credencial</label><input type="text" id="op" autocomplete="off" placeholder="OP-…"></div>
+    <button class="btn" type="submit">Entrar</button>
+  </form>
+
+  <section id="scan" hidden>
+    <div class="cam" id="camBox"><video id="video" playsinline muted></video><div class="frame" aria-hidden="true"></div></div>
+    <div id="camMsg"></div>
+    <div class="row2" style="margin-top:10px">
+      <button class="btn ghost" type="button" id="btnCam">Activar cámara</button>
+      <button class="btn ghost" type="button" id="btnSalir">Cerrar sesión</button>
+    </div>
+    <details class="card" style="margin-top:12px"><summary><b>Ingresar código manualmente</b></summary>
+      <div class="field"><input type="text" id="manual" autocomplete="off" placeholder="RP1.…"></div>
+      <button class="btn small" type="button" id="btnManual">Verificar</button>
+    </details>
+    <div id="result" aria-live="assertive"></div>
+  </section>
+</div>
+<script src="config.js"></script>
+<script src="vendor/jsQR.js"></script>
+<script src="assets/api.js"></script>
+<script src="assets/puerta.js"></script>
+</body>
+</html>
