@@ -109,5 +109,12 @@
   }
   function remembered(k) { try { return !!localStorage.getItem(k); } catch (e) { return false; } }
 
-  window.API = { url: apiUrl, get: get, post: post, requestIdFor: requestIdFor, forgetRequest: forgetRequest, store: store, load: load, remembered: remembered, newId: newId, INTENTOS: INTENTOS };
+  var temprana = null;
+  if (document.getElementById('voteForm') && apiUrl()) { temprana = get('config'); temprana.catch(function () {}); }
+  function getRapido(action) {
+    if (action === 'config' && temprana) { var t = temprana; temprana = null; return t; }
+    return get(action);
+  }
+
+  window.API = { url: apiUrl, get: getRapido, post: post, requestIdFor: requestIdFor, forgetRequest: forgetRequest, store: store, load: load, remembered: remembered, newId: newId, INTENTOS: INTENTOS };
 })();

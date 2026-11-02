@@ -114,15 +114,24 @@
   }
 
   /* ---------------- Configuración y estados ---------------- */
+  var CACHE_CFG = 'cfg:v1';
+  function cfgGuardada() {
+    try { var o = JSON.parse(localStorage.getItem(CACHE_CFG) || 'null'); return o && o.c && o.c.estado_publico ? o.c : null; } catch (e) { return null; }
+  }
+  function cfgGuardar(c) { try { localStorage.setItem(CACHE_CFG, JSON.stringify({ c: c, t: Date.now() })); } catch (e) {} }
   function boot() {
-    show($('loading'), true); $('banner').innerHTML = '';
+    $('banner').innerHTML = '';
+    var previa = cfgGuardada();
+    if (previa) { CFG = previa; cfgAt = 0; show($('loading'), false); render(); } else show($('loading'), true);
     API.get('config').then(function (r) {
       show($('loading'), false);
       if (!r || !r.ok || !r.config) throw Object.assign(new Error('respuesta'), { code: 'RED' });
-      CFG = r.config; cfgAt = Date.now();
-      render();
+      var antes = previa ? JSON.stringify(previa) : null;
+      CFG = r.config; cfgAt = Date.now(); cfgGuardar(CFG);
+      if (antes !== JSON.stringify(CFG)) render();
     }).catch(function (e) {
       show($('loading'), false);
+      if (previa) return;
       var m = netError(e);
       $('banner').innerHTML = notice(m[0], m[1], e.code === 'PENDIENTE' ? m[2] : 'No se pudo cargar la información. Revisa tu conexión.', e.code !== 'PENDIENTE');
       var b = $('banner').querySelector('[data-retry]'); if (b) b.onclick = boot;
@@ -133,7 +142,7 @@
     return API.get('config').then(function (r) {
       if (r && r.ok && r.config) {
         var antes = CFG ? CFG.estado_publico : null;
-        CFG = r.config; cfgAt = Date.now();
+        CFG = r.config; cfgAt = Date.now(); cfgGuardar(CFG);
         if (antes !== CFG.estado_publico) render(); else aplicarPermisos();
       }
       return CFG;
