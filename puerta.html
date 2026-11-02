@@ -3,12 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src https://script.google.com https://script.googleusercontent.com; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex">
 <title>Control de puerta</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,700;9..40,800&family=Fraunces:opsz,wght@9..144,700;9..144,800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
@@ -22,27 +20,30 @@
 
   <form class="card" id="login" novalidate>
     <h2>Credencial de operador</h2>
-    <p class="lead">La entrega el organizador. Se guarda solo en esta pestaña.</p>
-    <div class="field"><label for="op">Credencial</label><input type="text" id="op" autocomplete="off" placeholder="OP-…"></div>
-    <button class="btn" type="submit">Entrar</button>
+    <p class="lead">La entrega el organizador. Se guarda solo en esta pestaña y se valida con el servidor.</p>
+    <div class="field" data-f="op"><label for="op">Credencial</label><input type="text" id="op" autocomplete="off" spellcheck="false" placeholder="OP-…"><div class="err-msg" id="op-err"></div></div>
+    <div id="loginMsg"></div>
+    <button class="btn" type="submit" id="btnEntrar">Entrar</button>
   </form>
 
   <section id="scan" hidden>
-    <div class="cam" id="camBox"><video id="video" playsinline muted></video><div class="frame" aria-hidden="true"></div></div>
+    <p class="estado-chip estado-puerta" id="estadoPuerta">Lista para escanear</p>
+    <p class="hint" id="operadorInfo"></p>
+    <div class="cam" id="camBox" hidden><video id="video" playsinline muted></video><div class="frame" aria-hidden="true"></div></div>
     <div id="camMsg"></div>
-    <div class="row2" style="margin-top:10px">
+    <div class="row2 mt10">
       <button class="btn ghost" type="button" id="btnCam">Activar cámara</button>
       <button class="btn ghost" type="button" id="btnSalir">Cerrar sesión</button>
     </div>
-    <details class="card" style="margin-top:12px"><summary><b>Ingresar código manualmente</b></summary>
-      <div class="field"><input type="text" id="manual" autocomplete="off" placeholder="RP1.…"></div>
+    <details class="card mt12" id="manualBox"><summary><b>Ingresar código manualmente</b></summary>
+      <div class="field" data-f="manual"><label for="manual">Código de la entrada</label><input type="text" id="manual" autocomplete="off" spellcheck="false" placeholder="RP1.…"><div class="err-msg" id="manual-err"></div></div>
       <button class="btn small" type="button" id="btnManual">Verificar</button>
     </details>
-    <div id="result" aria-live="assertive"></div>
+    <div id="result" tabindex="-1"></div>
+    <div class="sr" id="anuncio" role="alert" aria-atomic="true"></div>
   </section>
 </div>
 <script src="config.js"></script>
-<script src="vendor/jsQR.js"></script>
 <script src="assets/api.js"></script>
 <script src="assets/puerta.js"></script>
 </body>
